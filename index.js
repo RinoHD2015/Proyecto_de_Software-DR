@@ -288,7 +288,7 @@ app.put("/Clientes/:id", async (req, res) => {
 // Endpoint para eliminar un Cliente
 app.delete("/Clientes/:id", async (req, res) => {
     try { 
-        const db = getDb();
+        const db = getDb(); 
         const id = req.params.id;
         const resultado = await db.collection("Clientes").deleteOne({ _id: new ObjectId(id) });
         if (resultado.deletedCount === 0) {
@@ -414,6 +414,120 @@ app.delete("/Proveedores/:id", async (req, res) => {
         console.error("Error al eliminar el proveedor:", error);
         res.status(500).json({
             error: "Error al eliminar el proveedor",
+        });
+    }
+});
+
+// Endpoint para guardar un Producto
+app.post("/Productos", async (req, res) => {
+    try {
+        const db = getDb();
+        const { nombre, descripcion, precio, stock } = req.body;
+        const resultado = await db.collection("Productos").insertOne({
+            nombre,
+            descripcion,
+            precio,
+            stock,
+            fechaCreacion: new Date(),
+        });
+        res.status(201).json({
+            message: "Producto guardado exitosamente",
+            productoId: resultado.insertedId,
+            });
+            } catch (error) {
+        console.error("Error al guardar el producto:", error);
+        res.status(500).json({
+            error: "Error al guardar el producto",
+        });
+    }
+});
+
+// Endpoint para obtener todos los Productos
+app.get("/Productos", async (req, res) => {
+    try {
+        const db = getDb();
+        const productos = await db. collection("Productos").find().toArray();
+        res.status(200).json(productos);
+    } catch (error) {
+        console.error("Error al obtener los productos:", error);
+        res.status(500).json({
+            error: "Error al obtener los productos",
+        });
+    }
+})
+
+// Endpoint para obtener un Producto por ID
+app.get("/Productos/:id", async (req, res) => {
+    try {
+        const db = getDb();
+        const id = req.params.id;
+        const producto = await db.collection("Productos").findOne({ _id: new ObjectId(id) });
+        if (!producto) {
+            return res.status(404).json({
+                error: "Producto no encontrado",
+            });
+        }
+        res.status(200).json(producto);
+    } catch (error) {
+        console.error("Error al obtener el producto:", error);
+        res.status(500).json({
+            error: "Error al obtener el producto",
+        });
+    }
+});
+
+// Endpoint para actualizar un Producto 
+app.put("/Productos/:id", async (req, res) => {
+    try {
+        const db = getDb();
+        const id = req.params.id;
+        const { nombre, descripcion, precio, stock } = req.body;
+        const resultado = await db.collection("Productos").updateOne(
+            { _id: new ObjectId(id) },
+            {
+                $set: {
+                    nombre,
+                    descripcion,
+                    precio,
+                    stock,
+                    fechaActualizacion: new Date(),
+                },
+            }
+        );
+        if (resultado.matchedCount === 0) {
+            return res.status(404).json({
+                error: "Producto no encontrado",
+            });
+        }
+        res.status(200).json({
+            message: "Producto actualizado exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al actualizar el producto:", error);
+        res.status(500).json({
+            error: "Error al actualizar el producto",
+        });
+    }
+});
+
+// Endpoint para eliminar un Producto
+app.delete("/Productos/:id", async (req, res) => {
+    try {
+        const db = getDb();
+        const id = req.params.id;
+        const resultado = await db.collection("Productos").deleteOne({ _id: new ObjectId(id) });
+        if (resultado.deletedCount === 0) {
+            return res.status(404).json({
+                error: "Producto no encontrado",
+            });
+        }
+        res.status(200).json({
+            message: "Producto eliminado exitosamente",
+        });
+    } catch (error) {
+        console.error("Error al eliminar el producto:", error);
+        res.status(500).json({
+            error: "Error al eliminar el producto",
         });
     }
 });
