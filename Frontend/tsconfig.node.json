@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true
+  },
+  "exclude": [
+    "vite.config.js",
+    "eslint.config.js",
+    "src/Componentes/**/*.js"
+  ]
+}
